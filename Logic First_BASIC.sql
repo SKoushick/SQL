@@ -123,3 +123,101 @@ when 'ANALYST' then 4
 when 'SALES' then 5
 else 100 end
 );
+
+
+
+-- FUNCTIONS - performs a specific task
+-- count function
+select count(*) total_count from employee;
+
+select count(*) Manager_count from employee where job_det = 'MANAGER';
+
+-- AGGREGATE FUNCTION
+
+-- Avg funciton
+select avg(salary) from employee where job_det = 'MANAGER';
+
+-- SUM function
+select sum(salary) from employee where job_det='ANALYST';
+
+-- Max funciotn
+select max(salary) from employee;
+
+-- Min funciotn
+select min(salary) from employee;
+
+-- String Function
+
+-- UCASE
+select ucase(ename) name,salary from employee;
+
+-- CHAR_LENGTH
+select ename,char_length(ename) char_count from employee;
+
+-- CONCATE function
+select ename,concat('Rs.',salary) from employee;
+
+-- FORMAT function
+select ename,concat('Rs.',format(salary,0)) from employee;
+
+-- left function
+select ename,left(job_det,3) from employee;
+
+
+
+
+-- DATE 
+
+alter table employee add column Hire_date date;
+
+select * from employee;
+
+update employee set Hire_date='2021-4-12';
+update employee set Hire_date='2001-6-23' where job_det='ANALYST';
+update employee set Hire_date='2006-3-17' where job_det='HR';
+update employee set Hire_date='2000-1-10' where job_det='MANAGER';
+
+select now();
+
+select date(now());
+
+select curdate();
+
+select date_format(curdate(),'%d/%m/%y');
+select date_format(curdate(),'%d/%m/%Y');
+
+select date_format(curdate(),'%Y/%m/%d') as Date;
+
+select datediff(curdate(),'2022/6/22') as Date_diff;
+
+select date_add(curdate(),interval 1 day ) as Interval_1day;
+select date_add(curdate(),interval 1 month ) as Interval_1month;
+select date_add(curdate(),interval 1 year ) as Interval_1year;
+
+select * from employee;
+
+-- GROUP BY and having
+
+select * from employee order by job_det;
+
+select job_det,avg(salary) from employee group by job_det;
+
+select job_det,count(salary) from employee group by job_det;
+
+-- we cannot give the group by without any aggregate functions and without the aggregate funciotn this wont be relatable
+-- this is the example for it
+select job_det ,salary from employee group by job_det;
+
+-- Having function
+
+select job_det,count(emp_id) from employee group by job_det having count(emp_id)>1;
+
+-- where filters rows
+-- having filters group by
+
+-- we can only give the order by at the last so  it will  be efficient 
+select job_det,count(emp_id) from employee group by job_det having count(emp_id)>1 order by job_det; 
+
+select job_det,count(emp_id) from employee group by job_det having count(emp_id)>1 order by job_det; 
+
+select job_det,count(emp_id) from employee where salary>200000 group by job_det having count(emp_id)>1 order by job_det; 
