@@ -389,6 +389,8 @@ INSERT INTO employee VALUES(15,'Ranjani','ENGINEER',2100000,NULL);
 select * from employee;
 select * from branch;
 
+create or replace view emp_br
+as
 select employee.emp_id,employee.ename,employee.job_det,branch.br_name 
 from employee 
 inner join branch 
@@ -465,3 +467,30 @@ select * from clients;
 
 select * from employee 
 where branch_id-(select branch_id from branch where br_name='coimbatore');
+
+-- employee with min salary
+select * from employee where salary= (select min(salary)from employee ); 
+
+-- EXISTS used with subquery
+-- branches containing atleast one admin
+
+select branch_id,br_name from branch where exists(select * from employee where job_det='ADMIN' and branch.branch_id=employee.branch_id);
+
+select * from employee where job_det='ADMIN'; 
+
+-- ANY 
+-- branch info in which any employee gets more then 2.5l
+
+select * from branch where branch=any(select branch_id from employee where salary>250000);
+
+
+-- ALL 
+-- employee not working in chennai or coimbatore
+
+select * from employee where branch_id<>all(
+select branch_id from branch where br_name in ('chennai','coimbatore'));
+
+-- viewa 
+
+select * from employee where job_det ='MANAGER';
+ drop view emp_br;
