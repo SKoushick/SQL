@@ -221,3 +221,247 @@ select job_det,count(emp_id) from employee group by job_det having count(emp_id)
 select job_det,count(emp_id) from employee group by job_det having count(emp_id)>1 order by job_det; 
 
 select job_det,count(emp_id) from employee where salary>200000 group by job_det having count(emp_id)>1 order by job_det; 
+
+drop table employee;
+
+use logicfirst;
+
+create table employee( 
+emp_id int primary key auto_increment, 
+ename varchar(30) not null, 
+job_det varchar(20) default 'Unassigned',
+salary int,pan varchar(10) unique,
+check (salary >100000));
+
+insert into employee(ename,salary) values('Ramya',1300000);
+
+select * from employee;
+
+-- example for adding contraints to the unadded values of the db
+create table employee(emp_id int,ename varchar(20), job_det varchar(20),salary int);
+
+-- adding constraints
+
+alter table employee modify ename varchar(30) not null;
+-- if we dont need the not null we could just give it as 
+
+alter table employee modify ename varchar(30);
+
+-- default constraint 
+alter table employee alter job_det set default 'unassigned';
+
+-- drop default
+alter table employee alter job_det drop default;
+
+-- add check contraints 
+alter table employee add check (salary>100000);
+
+-- to drop contraints by giving them a name 
+alter table employee add constraint chl_salary check (salary>100000);
+
+-- drop the contraint using the name
+alter table employee drop check chl_salary;
+
+alter table employee add column branch_id int;
+
+select * from employee ;
+
+create table branch(branch_id int primary key auto_increment ,br_name varchar(30) not null, addr varchar(200));
+
+drop table employee;
+
+-- foreign key
+create table employee (emp_id int primary key,
+ename varchar(30),
+job_det varchar(20),
+salary int,branch_id int ,
+constraint Fk_brach_id foreign key(branch_id) references branch(branch_id));
+
+-- cut the connection between the foreign key and the other database branch
+alter table employee drop foreign key Fk_brach_id;
+
+-- linking them after cutting it 
+alter table employee add constraint Fk_branch foreign key(branch_id) references branch(branch_id);
+
+-- index 
+show index from employee;
+-- creating index 
+create index name_index on employee(ename);
+alter table employee add index(ename);
+
+-- Dropping index from the table
+alter table employee drop index ename;
+
+
+select * from employee;
+
+-- on delete\
+drop table employee,branch;
+
+create table branch(
+branch_id int primary key auto_increment 
+,br_name varchar(30) not null, 
+addr varchar(200));
+
+create table employee (emp_id int primary key,
+ename varchar(30),
+job_det varchar(20),
+salary int,
+branch_id int ,
+constraint Fk_brach_id foreign key(branch_id) references branch(branch_id)
+on delete  cascade -- cascade or set null
+);
+-- set null is used to set the value null to the specified rows
+-- cascade will totally delete the row of the specified row
+
+
+INSERT INTO branch VALUES(1,"Chennai","16 ABC Road");
+INSERT INTO branch VALUES(2,"Coimbatore","120 15th Block");
+INSERT INTO branch VALUES(3,"Mumbai","25 XYZ Road");
+INSERT INTO branch VALUES(4,"Hydrabad","32 10th Street");
+select * from branch;
+drop table branch;
+
+INSERT INTO employee VALUES(1,'Ram','ADMIN',1000000,2);
+INSERT INTO employee VALUES(2,'Harini','MANAGER',2500000,2);
+INSERT INTO employee VALUES(3,'George','SALES',2000000,1);
+INSERT INTO employee VALUES(4,'Ramya','SALES',1300000,2);
+INSERT INTO employee VALUES(5,'Meena','HR',2000000,3);
+INSERT INTO employee VALUES(6,'Ashok','MANAGER',3000000,1);
+INSERT INTO employee VALUES(7,'Abdul','HR',2000000,1);
+INSERT INTO employee VALUES(8,'Ramya','ENGINEER',1000000,2);
+INSERT INTO employee VALUES(9,'Raghu','CEO',8000000,3);
+INSERT INTO employee VALUES(10,'Arvind','MANAGER',2800000,3);
+INSERT INTO employee VALUES(11,'Akshay','ENGINEER',1000000,1);
+INSERT INTO employee VALUES(12,'John','ADMIN',2200000,10);
+INSERT INTO employee VALUES(13,'Abinaya','ENGINEER',2100000,2);
+INSERT INTO employee VALUES(14,'Vidya','ADMIN',2200000,NULL);
+INSERT INTO employee VALUES(15,'Ranjani','ENGINEER',2100000,NULL);
+
+select * from employee;
+select * from branch;
+
+delete from branch where branch_id=2;
+
+-- joins 
+
+drop table employee,branch;
+
+create table branch(
+branch_id int primary key auto_increment 
+,br_name varchar(30) not null, 
+addr varchar(200));
+
+create table employee (emp_id int primary key,
+ename varchar(30),
+job_det varchar(20),
+salary int,
+branch_id int ,
+constraint Fk_brach_id foreign key(branch_id) references branch(branch_id)
+on delete  cascade -- cascade or set null
+);
+
+
+
+INSERT INTO branch VALUES(1,"Chennai","16 ABC Road");
+INSERT INTO branch VALUES(2,"Coimbatore","120 15th Block");
+INSERT INTO branch VALUES(3,"Mumbai","25 XYZ Road");
+INSERT INTO branch VALUES(4,"Hydrabad","32 10th Street");
+
+
+INSERT INTO employee VALUES(1,'Ram','ADMIN',1000000,2);
+INSERT INTO employee VALUES(2,'Harini','MANAGER',2500000,2);
+INSERT INTO employee VALUES(3,'George','SALES',2000000,1);
+INSERT INTO employee VALUES(4,'Ramya','SALES',1300000,2);
+INSERT INTO employee VALUES(5,'Meena','HR',2000000,3);
+INSERT INTO employee VALUES(6,'Ashok','MANAGER',3000000,1);
+INSERT INTO employee VALUES(7,'Abdul','HR',2000000,1);
+INSERT INTO employee VALUES(8,'Ramya','ENGINEER',1000000,2);
+INSERT INTO employee VALUES(9,'Raghu','CEO',8000000,3);
+INSERT INTO employee VALUES(10,'Arvind','MANAGER',2800000,3);
+INSERT INTO employee VALUES(11,'Akshay','ENGINEER',1000000,1);
+INSERT INTO employee VALUES(12,'John','ADMIN',2200000,10);
+INSERT INTO employee VALUES(13,'Abinaya','ENGINEER',2100000,2);
+INSERT INTO employee VALUES(14,'Vidya','ADMIN',2200000,NULL);
+INSERT INTO employee VALUES(15,'Ranjani','ENGINEER',2100000,NULL);
+
+
+select * from employee;
+select * from branch;
+
+select employee.emp_id,employee.ename,employee.job_det,branch.br_name 
+from employee 
+inner join branch 
+on employee.branch_id=branch.branch_id 
+order by emp_id;
+
+-- this will take all the values of left table Employee if it null also and display in the table
+select employee.emp_id,employee.ename,employee.job_det,branch.br_name 
+from employee 
+left join branch 
+on employee.branch_id=branch.branch_id 
+order by emp_id;
+
+-- this will take all the values of Right table Branch if it null also and display in the table
+
+select employee.emp_id,employee.ename,employee.job_det,branch.br_name 
+from employee 
+right join branch 
+on employee.branch_id=branch.branch_id 
+order by emp_id;
+
+
+-- cross join
+select employee.emp_id,employee.ename,employee.job_det,branch.br_name 
+from employee 
+cross join branch 
+on employee.branch_id=branch.branch_id 
+order by emp_id;
+
+-- using where 
+select e.emp_id,e.ename,e.job_det,b.br_name 
+from employee as e ,branch as b
+where e.branch_id=b.branch_id;
+
+-- br_name emp_count
+
+select b.br_name,count(e.emp_id) No_of_Count 
+from branch as b 
+join employee as e
+on e.branch_id=b.branch_id
+group by e.branch_id;
+
+select* from employee;
+
+-- job_det and salary
+select e.job_det,e.salary,b.branch_id,b.br_name
+from employee as e
+join branch as b 
+on e.branch_id=b.branch_id;
+
+-- union
+CREATE TABLE clients (
+client_id INT PRIMARY KEY AUTO_INCREMENT,
+location VARCHAR(30) NOT NULL,
+addr VARCHAR(200) );
+INSERT INTO clients VALUES(1,"NewYork","25 10th Block");
+INSERT INTO clients VALUES(2,"Coimbatore","120 15th Block");
+INSERT INTO clients VALUES(3,"London","21 ABC Road");
+
+select * from branch;
+select * from clients;
+
+select * from branch
+union
+select * from clients;
+
+-- union all
+select * from branch
+union all
+select * from clients;
+
+
+-- subquery ,exists ,any ,all
+
+select * from employee 
+where branch_id-(select branch_id from branch where br_name='coimbatore');
